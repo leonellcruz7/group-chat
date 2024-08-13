@@ -89,7 +89,7 @@ const page = () => {
               );
             })}
           </div>
-          <div className="fixed bottom-[80px] w-[90%] rounded-b-[30px] overflow-hidden">
+          <div className="fixed bottom-[80px] w-[90%] rounded-b-[30px]">
             <ChatField />
           </div>
         </div>

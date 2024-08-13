@@ -9,7 +9,7 @@ const Input = ({ textarea, ...props }: IProp) => {
   return textarea ? (
     <textarea
       {...props}
-      className="pt-2.5 border outline-none h-12 rounded-lg px-4 w-full resize-none"
+      className="whitespace-pre-wrap pt-2.5 border outline-none h-12 rounded-lg px-4 w-full resize-none"
     />
   ) : (
     <input

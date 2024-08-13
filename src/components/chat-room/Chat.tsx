@@ -2,6 +2,8 @@ import { IChat } from "@/lib/redux/chat";
 import classNames from "classnames";
 import { format, parseISO } from "date-fns";
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 interface IProp {
   me?: boolean;
@@ -10,6 +12,7 @@ interface IProp {
 
 const Chat = ({ me, chat }: IProp) => {
   const { name, text, date } = chat;
+
   return (
     <div className={classNames("flex gap-4", me && "justify-end")}>
       <div
@@ -42,14 +45,15 @@ const Chat = ({ me, chat }: IProp) => {
             me && "!bg-blue-600 md:ml-[300px] !mr-0"
           )}
         >
-          <p
+          <ReactMarkdown
             className={classNames(
-              "text-[14px] text-gray-800 break-words",
+              "text-[14px] text-gray-800 break-words whitespace-pre-wrap",
               me && "!text-white text-right"
             )}
+            rehypePlugins={[rehypeRaw]}
           >
             {text}
-          </p>
+          </ReactMarkdown>
         </div>
         <p className="text-xs text-gray-400">
           {format(date, "eeee, LL/dd/yyyy - hh:mmaa")}

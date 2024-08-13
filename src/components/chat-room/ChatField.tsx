@@ -1,14 +1,13 @@
 import React, { ChangeEvent, useState } from "react";
-import Input from "../ui/Input";
 import Button from "../ui/Button";
-import { RiHeartFill, RiSendPlaneFill } from "@remixicon/react";
+import { RiSendPlaneFill } from "@remixicon/react";
 import { useSearchParams } from "next/navigation";
-import { useAppDispatch } from "@/lib/hooks";
-import { addChat } from "@/lib/redux/chat";
 import chatService from "@/server/chat";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import EmojiSelector from "../ui/EmojiPicker";
 
 const ChatField = () => {
-  const dispatch = useAppDispatch();
   const params = useSearchParams();
   const name = params.get("name") || "";
 
@@ -16,7 +15,6 @@ const ChatField = () => {
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(message);
 
     chatService.add({ name, text: message, date: new Date() });
 
@@ -24,23 +22,27 @@ const ChatField = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full h-20 bg-slate-600/80 flex items-center px-20 gap-4 backdrop-blur-[4px]"
-    >
-      <Input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        textarea
-        className=" whitespace-pre-wrap"
-      />
-      <Button
-        type="submit"
-        className="w-12"
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full h-20 bg-slate-600/80 flex items-center px-20 gap-4 backdrop-blur-[4px]"
       >
-        <RiSendPlaneFill size={24} />
-      </Button>
-    </form>
+        <ReactQuill
+          value={message}
+          onChange={(value) => setMessage(value)}
+          className="bg-white w-full border-none h-12 outline-none"
+          modules={{ toolbar: false }}
+        />
+        <EmojiSelector onSelect={(val) => setMessage((prev) => prev + val)} />
+
+        <Button
+          type="submit"
+          className="w-12"
+        >
+          <RiSendPlaneFill size={24} />
+        </Button>
+      </form>
+    </>
   );
 };
 

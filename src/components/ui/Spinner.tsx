@@ -1,9 +1,8 @@
 import React from "react";
 import { ring } from "ldrs";
 
-ring.register();
-
 const Spinner = () => {
+  ring.register();
   return (
     <l-ring
       size="40"

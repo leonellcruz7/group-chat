@@ -16,13 +16,19 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { useSearchParams } from "next/navigation";
 import { debounce } from "lodash";
+import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Spinner from "@/components/ui/Spinner";
 
-const page = () => {
+const ChatRoom = () => {
+  // const router = useRouter();
+
+  const [name, setName] = useState("");
+
+  const dispatch = useAppDispatch();
+
   const [fetchingNextData, setfetchingNextData] = useState(false);
+
   const { chats } = useAppSelector((state) => state.chat);
 
   const { isLoading } = useQuery({
@@ -34,12 +40,6 @@ const page = () => {
       }),
   });
 
-  const dispatch = useAppDispatch();
-
-  const params = useSearchParams();
-
-  const name = params.get("name") || "leonell";
-
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const handleScrollDown = useCallback(() => {
@@ -49,7 +49,7 @@ const page = () => {
         behavior: "smooth",
       });
     }
-  }, [chats]);
+  }, []);
 
   const fetchNextData = () => {
     setfetchingNextData(true);
@@ -78,7 +78,7 @@ const page = () => {
     if (chatContainerRef.current) {
       handleScrollDown();
     }
-  }, [isLoading]);
+  }, [isLoading, handleScrollDown]);
 
   useEffect(() => {
     const container = chatContainerRef.current;
@@ -88,9 +88,14 @@ const page = () => {
     return () => {
       container && container.removeEventListener("scroll", detectScroll);
     };
-  }, [chats]);
+  }, [chats, detectScroll]);
 
   useEffect(() => {
+    if (sessionStorage.getItem("name")) {
+      setName(sessionStorage.getItem("name") || "");
+    } else {
+      // router.push("/");
+    }
     const chatsRef = collection(db, "chats");
 
     const q = query(chatsRef, orderBy("date", "desc"), limit(1));
@@ -121,7 +126,7 @@ const page = () => {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [dispatch]);
 
   if (isLoading)
     return (
@@ -141,7 +146,7 @@ const page = () => {
           <div className="p-4 space-y-10">
             {fetchingNextData && (
               <div className="absolute top-10 left-[50%] translate-x-[-50%]">
-                <Spinner />
+                <Loader />
               </div>
             )}
             {chats.map((item, index) => {
@@ -174,4 +179,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ChatRoom;

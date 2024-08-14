@@ -1,3 +1,5 @@
+"use client";
+import { useOutsideClick } from "@/lib/hooks";
 import EmojiPicker from "emoji-picker-react";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -9,17 +11,19 @@ const EmojiSelector = ({ onSelect }: IProp) => {
   const [show, setShow] = useState(false);
   const emojiRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleDetectClick = (e) => {
-      if (emojiRef.current && !emojiRef.current.contains(e.target)) {
-        setShow(false);
-      }
-    };
+  useOutsideClick(emojiRef, () => setShow(false));
 
-    document!.addEventListener("click", handleDetectClick);
+  // useEffect(() => {
+  //   const handleDetectClick = (e: MouseEvent) => {
+  //     if (emojiRef.current && !emojiRef.current.contains(e.target as Node)) {
+  //       setShow(false);
+  //     }
+  //   };
 
-    return () => document.removeEventListener("click", handleDetectClick);
-  }, []);
+  //   document.addEventListener("click", handleDetectClick);
+
+  //   return () => document.removeEventListener("click", handleDetectClick);
+  // }, []);
 
   return (
     <div

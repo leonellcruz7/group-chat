@@ -5,7 +5,6 @@ import {
   addDoc,
   collection,
   doc,
-  DocumentSnapshot,
   getDoc,
   getDocs,
   limit,

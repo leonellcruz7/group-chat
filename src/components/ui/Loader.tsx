@@ -1,16 +1,13 @@
 import React from "react";
-import { bouncy } from "ldrs";
-
-bouncy.register();
+import HashLoader from "react-spinners/HashLoader";
 
 const Loader = () => {
   return (
     <div>
-      <l-bouncy
-        size="80"
-        speed="0.9"
-        color="#999"
-      ></l-bouncy>
+      <HashLoader
+        color="#000000"
+        size={50}
+      />
     </div>
   );
 };

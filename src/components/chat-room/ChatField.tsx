@@ -1,15 +1,14 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../ui/Button";
 import { RiSendPlaneFill } from "@remixicon/react";
-import { useSearchParams } from "next/navigation";
 import chatService from "@/server/chat";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import EmojiSelector from "../ui/EmojiPicker";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const ChatField = () => {
-  const params = useSearchParams();
-  const name = params.get("name") || "";
+  const [name, setName] = useState("");
 
   const [message, setMessage] = useState("");
 
@@ -30,6 +29,10 @@ const ChatField = () => {
       handleSubmit();
     }
   };
+
+  useEffect(() => {
+    setName(sessionStorage.getItem("name") || "");
+  }, []);
 
   return (
     <>

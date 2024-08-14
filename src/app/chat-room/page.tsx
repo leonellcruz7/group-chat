@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const ChatRoom = () => {
-  // const router = useRouter();
+  const router = useRouter();
 
   const [name, setName] = useState("");
 
@@ -94,7 +94,7 @@ const ChatRoom = () => {
     if (sessionStorage.getItem("name")) {
       setName(sessionStorage.getItem("name") || "");
     } else {
-      // router.push("/");
+      router.push("/");
     }
     const chatsRef = collection(db, "chats");
 

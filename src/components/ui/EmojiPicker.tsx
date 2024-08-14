@@ -16,7 +16,7 @@ const EmojiSelector = ({ onSelect }: IProp) => {
       }
     };
 
-    document.addEventListener("click", handleDetectClick);
+    document!.addEventListener("click", handleDetectClick);
 
     return () => document.removeEventListener("click", handleDetectClick);
   }, []);

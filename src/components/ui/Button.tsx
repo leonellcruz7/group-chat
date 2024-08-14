@@ -8,7 +8,7 @@ const Button = ({ children, ...props }: IProp) => {
     <button
       {...props}
       className={classNames(
-        "bg-blue-950 text-white h-12 rounded-xl font-semibold uppercase flex justify-center items-center",
+        "bg-blue-800 text-white h-12 rounded-xl font-semibold uppercase flex justify-center items-center hover:scale-[1.02] hover:bg-blue-950 transition-all",
         props.className
       )}
     >

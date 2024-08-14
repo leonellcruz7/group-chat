@@ -5,18 +5,33 @@ import ChatField from "@/components/chat-room/ChatField";
 import Loader from "@/components/ui/Loader";
 import { db } from "@/lib/firebase";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { initializeChat } from "@/lib/redux/chat";
+import { addChat, initializeChat, loadNextChats } from "@/lib/redux/chat";
 import chatService from "@/server/chat";
+import { RiArrowDownLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { useSearchParams } from "next/navigation";
-
-import React, { useEffect, useRef } from "react";
+import { debounce } from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import Spinner from "@/components/ui/Spinner";
 
 const page = () => {
-  const { data, isLoading } = useQuery({
+  const [fetchingNextData, setfetchingNextData] = useState(false);
+  const { chats } = useAppSelector((state) => state.chat);
+
+  const { isLoading } = useQuery({
     queryKey: ["chats"],
-    queryFn: chatService.list,
+    queryFn: () =>
+      chatService.list().then((res) => {
+        dispatch(initializeChat(res));
+        return res;
+      }),
   });
 
   const dispatch = useAppDispatch();
@@ -27,34 +42,79 @@ const page = () => {
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const { chats } = useAppSelector((state) => state.chat);
+  const handleScrollDown = useCallback(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [chats]);
 
-  useEffect(() => {
-    data && dispatch(initializeChat(data));
-  }, [data]);
+  const fetchNextData = () => {
+    setfetchingNextData(true);
+    chatService.list(chats[0].id!).then((res) => {
+      setfetchingNextData(false);
+      dispatch(loadNextChats(res));
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTo({
+          top: chatContainerRef.current.scrollHeight / (chats.length / 7),
+        });
+      }
+    });
+  };
+
+  const detectScroll = debounce(() => {
+    if (chatContainerRef.current) {
+      const { scrollTop } = chatContainerRef.current;
+
+      if (scrollTop === 0) {
+        fetchNextData();
+      }
+    }
+  }, 300);
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      handleScrollDown();
     }
+  }, [isLoading]);
+
+  useEffect(() => {
+    const container = chatContainerRef.current;
+
+    container && container.addEventListener("scroll", detectScroll);
+
+    return () => {
+      container && container.removeEventListener("scroll", detectScroll);
+    };
   }, [chats]);
 
   useEffect(() => {
     const chatsRef = collection(db, "chats");
 
-    const q = query(chatsRef, orderBy("date", "asc"));
+    const q = query(chatsRef, orderBy("date", "desc"), limit(1));
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const messagesData = snapshot.docs.map((doc) => ({
+        const data: any = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
-        dispatch(initializeChat(messagesData));
+        dispatch(
+          addChat([
+            {
+              id: data[0].id,
+              name: data[0].name,
+              text: data[0].text,
+              date: data[0].date,
+            },
+          ])
+        );
       },
+
       (error) => {
         console.error("Error fetching chats:", error);
       }
@@ -79,6 +139,11 @@ const page = () => {
           className="bg-gray-200 rounded-[30px] overflow-hidden relative w-full h-[90%] pb-40 overflow-y-scroll"
         >
           <div className="p-4 space-y-10">
+            {fetchingNextData && (
+              <div className="absolute top-10 left-[50%] translate-x-[-50%]">
+                <Spinner />
+              </div>
+            )}
             {chats.map((item, index) => {
               return (
                 <Chat
@@ -89,6 +154,17 @@ const page = () => {
               );
             })}
           </div>
+
+          <button
+            onClick={() => handleScrollDown()}
+            className="rounded-full w-10 h-10 flex items-center justify-center bg-gray-600 hover:bg-gray-400 transition-all fixed bottom-[180px] left-[50%] translate-x-[-50%] z-10"
+          >
+            <RiArrowDownLine
+              size={24}
+              color="white"
+            />
+          </button>
+
           <div className="fixed bottom-[80px] w-[90%] rounded-b-[30px]">
             <ChatField />
           </div>

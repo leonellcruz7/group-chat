@@ -56,7 +56,7 @@ const Chat = ({ me, chat }: IProp) => {
           </ReactMarkdown>
         </div>
         <p className="text-xs text-gray-400">
-          {format(date, "eeee, LL/dd/yyyy - hh:mmaa")}
+          {format(date, "eeee, LL/dd/yyyy - hh:mm:ss:ssaa")}
         </p>
       </div>
     </div>

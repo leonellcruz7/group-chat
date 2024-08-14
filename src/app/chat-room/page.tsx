@@ -56,10 +56,14 @@ const ChatRoom = () => {
 
   const fetchNextData = () => {
     setfetchingNextData(true);
+
     chatService.list(chats[0].id!).then((res) => {
       setfetchingNextData(false);
+
       dispatch(loadNextChats(res.chats));
+
       setHasMore(res.hasMore);
+
       if (chatContainerRef.current) {
         chatContainerRef.current.scrollTo({
           top: chatContainerRef.current.scrollHeight / (chats.length / 7),
@@ -100,6 +104,7 @@ const ChatRoom = () => {
     } else {
       router.push("/");
     }
+
     const chatsRef = collection(db, "chats");
 
     const q = query(chatsRef, orderBy("date", "desc"), limit(1));

@@ -27,7 +27,7 @@ export class ChatService {
     }
   }
 
-  async list(chatId?: string): Promise<IChat[]> {
+  async list(chatId?: string): Promise<{ chats: IChat[]; hasMore: boolean }> {
     try {
       let chatsQuery = query(
         collection(db, "chats"),
@@ -45,6 +45,8 @@ export class ChatService {
 
       const querySnapshot = await getDocs(chatsQuery);
 
+      const hasMore = querySnapshot.docs.length === 10;
+
       const dataArray: any = querySnapshot.docs
         .map((doc) => ({
           id: doc.id,
@@ -52,7 +54,7 @@ export class ChatService {
         }))
         .reverse();
 
-      return dataArray;
+      return { chats: dataArray, hasMore };
     } catch (err) {
       throw err;
     }

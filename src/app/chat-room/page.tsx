@@ -21,6 +21,8 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const ChatRoom = () => {
+  const [hasMore, setHasMore] = useState(true);
+
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -35,7 +37,8 @@ const ChatRoom = () => {
     queryKey: ["chats"],
     queryFn: () =>
       chatService.list().then((res) => {
-        dispatch(initializeChat(res));
+        dispatch(initializeChat(res.chats));
+        setHasMore(res.hasMore);
         return res;
       }),
   });
@@ -55,7 +58,8 @@ const ChatRoom = () => {
     setfetchingNextData(true);
     chatService.list(chats[0].id!).then((res) => {
       setfetchingNextData(false);
-      dispatch(loadNextChats(res));
+      dispatch(loadNextChats(res.chats));
+      setHasMore(res.hasMore);
       if (chatContainerRef.current) {
         chatContainerRef.current.scrollTo({
           top: chatContainerRef.current.scrollHeight / (chats.length / 7),
@@ -69,7 +73,7 @@ const ChatRoom = () => {
       const { scrollTop } = chatContainerRef.current;
 
       if (scrollTop === 0) {
-        fetchNextData();
+        hasMore && fetchNextData();
       }
     }
   }, 300);

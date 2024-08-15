@@ -43,7 +43,7 @@ const ChatRoom = () => {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen">
+    <div className="flex flex-col relative items-center justify-center w-screen h-screen">
       <div className="w-[90%] h-[90%] space-y-4">
         <p className="text-[24px] font-semibold">{name}</p>
         <ChatBox isLoading={isLoading} />

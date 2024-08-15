@@ -41,7 +41,7 @@ const ChatField = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="w-full h-20 bg-slate-600/80 flex items-center px-20 gap-4 backdrop-blur-[4px]"
+        className="w-full h-20 bg-slate-600/80 flex items-center px-4 md:px-20 gap-4 backdrop-blur-[4px]"
       >
         <ReactQuill
           value={message}
@@ -55,7 +55,7 @@ const ChatField = () => {
         <Button
           type="button"
           onClick={handleSubmit}
-          className="w-12"
+          className="w-12 flex-shrink-0"
         >
           <RiSendPlaneFill size={24} />
         </Button>

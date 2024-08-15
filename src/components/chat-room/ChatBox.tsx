@@ -142,7 +142,7 @@ const ChatBox = ({ isLoading }: IProp) => {
         />
       </button>
 
-      <div className="fixed bottom-[80px] w-[90%] rounded-b-[30px]">
+      <div className="fixed bottom-10 xlbottom-20 w-[90%] rounded-b-[30px]">
         <ChatField />
       </div>
     </div>

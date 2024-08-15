@@ -7,8 +7,10 @@ export interface IChat {
   date: Date;
 }
 
-const initialState: { chats: IChat[] } = {
+const initialState: { chats: IChat[]; hasMore: boolean; name: string } = {
   chats: [],
+  hasMore: true,
+  name: "",
 };
 
 export const chatSlice = createSlice({
@@ -24,8 +26,16 @@ export const chatSlice = createSlice({
     loadNextChats: (state, action) => {
       state.chats = [...action.payload, ...state.chats];
     },
+    setHasMore: (state, action: { payload: boolean }) => {
+      state.hasMore = action.payload;
+    },
+
+    setName: (state, action) => {
+      state.name = action.payload;
+    },
   },
 });
 
-export const { addChat, initializeChat, loadNextChats } = chatSlice.actions;
+export const { addChat, initializeChat, loadNextChats, setHasMore, setName } =
+  chatSlice.actions;
 export default chatSlice.reducer;

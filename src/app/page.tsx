@@ -11,6 +11,8 @@ export default function Home() {
 
   const handleEnter = (e: any) => {
     e.preventDefault();
+    console.log("test");
+
     router.push(`/chat-room`);
     sessionStorage.setItem("name", name);
   };
@@ -37,6 +39,7 @@ export default function Home() {
         <Button
           type="submit"
           onClick={handleEnter}
+          disabled={!name}
         >
           Enter
         </Button>

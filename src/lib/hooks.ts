@@ -39,7 +39,7 @@ export const detectScroll = debounce((ref, callback) => {
     const { scrollTop } = ref.current;
 
     if (scrollTop === 0) {
-      callback();
+      callback && callback();
     }
   }
 }, 300);

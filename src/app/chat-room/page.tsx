@@ -20,7 +20,7 @@ const ChatRoom = () => {
     queryKey: ["chats"],
     queryFn: () =>
       chatService.list().then((res) => {
-        dispatch(initializeChat(res.chats));
+        dispatch(initializeChat(res.chats.slice(1, res.chats.length - 1)));
         dispatch(setHasMore(res.hasMore));
         return res;
       }),

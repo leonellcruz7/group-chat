@@ -14,13 +14,14 @@ const ChatRoom = () => {
 
   const router = useRouter();
 
-  const { name } = useAppSelector((state) => state.chat);
+  const { name, chats } = useAppSelector((state) => state.chat);
 
   const { isLoading } = useQuery({
     queryKey: ["chats"],
     queryFn: () =>
       chatService.list().then((res) => {
-        dispatch(initializeChat(res.chats.slice(1, res.chats.length - 1)));
+        !chats.length &&
+          dispatch(initializeChat(res.chats.slice(1, res.chats.length - 1)));
         dispatch(setHasMore(res.hasMore));
         return res;
       }),

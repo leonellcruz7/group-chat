@@ -13,6 +13,7 @@ const ChatField = () => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = () => {
+    // prevents user from sending empty message
     if (message !== "<p><br></p><p><br></p>") {
       chatService.add({
         name,
@@ -24,6 +25,8 @@ const ChatField = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    // lets user send message using enter key
+    // lets user add line on shift enter
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSubmit();
